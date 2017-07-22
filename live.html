@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live codding</title>
+    <style>
+        input {
+            padding:5px;
+            margin: 2px 10px 15px 10px;
+        }
+        #country_code_validation, #phone_number_validation{
+            display: none;
+        }
+
+    </style>
+
+</head>
+<body>
+<div>
+    <div>Country code:</div><input id="country_code">
+    <span id="country_code_validation">Country code must be only digits</span><br>
+    <div>Phone number:</div><input id="phone_number">
+    <span id="phone_number_validation">Phone number must be only digits</span><br>
+    <div>Your country:</div><input id="country" disabled><br>
+    <span> { country: "Russia", code: "7" }</span><br>
+    <span> { country: "Cambodia", code: "855" }</span><br>
+    <span> { country: "Cameroon", code: "237" }</span><br>
+    <span> { country: "Chad", code: "235" }</span><br>
+    <span> { country: "Chile", code: "56" }</span><br>
+    <span> { country: "China", code: "86" }</span><br>
+    <span> { country: "Cyprus", code: "357" }</span><br>
+    <span> { country: "Cayman Islands", code: "1345" }</span><br>
+    <span> { country: "Bulgaria", code: "359" }</span><br>
+
+
+
+</div>
+
+<script type="text/javascript" defer>
+
+    function $(el) {
+        if ( !(this instanceof $) ) return new $(el);
+        this.el = document.getElementById(el);
+    }
+    $.prototype.style = function(field, value){
+        this.el.style[field] = value;
+    };
+    $.prototype.value = function(value){
+        this.el.value = value ? value :  this.el.value;
+        return this.el.value;
+    };
+    $.prototype.input = function(callback){
+        this.el.addEventListener('input', function(){
+            callback();
+        });
+    };
+
+    $('country_code').input( function(){
+        var country_code = $('country_code');
+        validation( !country_code.value().match(/^\d+$/) && country_code.value().length != 0, $('country_code_validation') );
+        country_code.value( getNumbers( country_code.value() ).substring(0,4) );
+        $('country').value( getCountry( country_code.value() ));
+    });
+
+    $('phone_number').input( function(){
+        var phone_number = $('phone_number');
+        validation( !phone_number.value().match(/^[0-9-]+$/) && phone_number.value().length != 0, $('phone_number_validation') );
+        phone_number.value( numberFormatter( getNumbers( phone_number.value() ).substring(0,7) ));
+    });
+
+    function validation(isShow, element){
+        isShow ? element.style('display', 'inline') : element.style('display', 'none');
+    }
+
+    function getNumbers(str){
+        return str.replace(/\D+/g,"");
+    }
+
+    function numberFormatter(str) {
+        return str.replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1-');
+    }
+
+    function getCountry(code){
+        var res = counties.filter(function (item) {
+            return +item.code == +code;
+        });
+        return res.length == 0 ? 'unknown country' : res[0].country;
+    }
+
+
+    var counties = [
+        { country: "Russia", code: "7" },
+        { country: "Cambodia", code: "855" },
+        { country: "Cameroon", code: "237" },
+        { country: "Chad", code: "235" },
+        { country: "Chile", code: "56" },
+        { country: "China", code: "86" },
+        { country: "Cyprus", code: "357" },
+        { country: "Cayman Islands", code: "1345" },
+        { country: "Bulgaria", code: "359" },
+        { country: "Belarus", code: "375" },
+        { country: "Afghanistan", code: "93" }
+    ]
+
+</script>
+
+</body>
+</html>
